@@ -36,6 +36,8 @@ public class LoveApp {
                 .defaultAdvisors(
                         new MessageChatMemoryAdvisor(chatMemory),
                         new MyLoggerAdvisor()
+                        // 自定义推理增强Advisor，可按需开启
+//                        new ReReadingAdvisor()
                 )
                 .build();
     }
