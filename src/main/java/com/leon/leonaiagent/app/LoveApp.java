@@ -1,12 +1,11 @@
 package com.leon.leonaiagent.app;
 
 
-import com.leon.leonaiagent.advisor.MyLoggerAdvisor;
+import com.leon.leonaiagent.chatmemory.FileBasedChatMemory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.memory.InMemoryChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.stereotype.Component;
@@ -32,6 +31,18 @@ public class LoveApp {
      * @param dashscopeChatModel
      */
     public LoveApp(ChatModel dashscopeChatModel) {
+        // 初始化基于文件的对话记忆
+        String fileDir = System.getProperty("user.dir") + "/tmp/chat-memory";
+        ChatMemory chatMemory = new FileBasedChatMemory(fileDir);
+        chatClient = ChatClient.builder(dashscopeChatModel)
+                .defaultSystem(SYSTEM_PROMPT)
+                .defaultAdvisors(
+                        new MessageChatMemoryAdvisor(chatMemory)
+                )
+                .build();
+    }
+
+    /*public LoveApp(ChatModel dashscopeChatModel) {
         // 初始化基于内存的对话记忆
         ChatMemory chatMemory = new InMemoryChatMemory();
         chatClient = ChatClient.builder(dashscopeChatModel)
@@ -44,7 +55,7 @@ public class LoveApp {
 //                        new ReReadingAdvisor()
                 )
                 .build();
-    }
+    }*/
 
     /**
      * AI 基础对话 （支持多轮会话记忆）
